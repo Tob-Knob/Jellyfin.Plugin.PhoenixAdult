@@ -181,6 +181,10 @@ namespace PhoenixAdult.Sites
             foreach (var sceneImage in sceneImages)
             {
                 var posterURL = sceneImage.Attributes["src"].Value;
+                if (string.IsNullOrEmpty(posterURL))
+                {
+                    posterURL = sceneImage.Attributes["srcset"].Value;
+                }
 
                 result.Add(new RemoteImageInfo
                 {
