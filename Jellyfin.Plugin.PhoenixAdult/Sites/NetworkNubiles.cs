@@ -176,6 +176,7 @@ namespace PhoenixAdult.Sites
             }
 
             var photoPageURL = "https://nubiles-porn.com/photo/gallery/" + sceneID[0];
+            Logger.Info($"Getting posters: {photoPageURL}");
             var photoPage = await HTML.ElementFromURL(photoPageURL, cancellationToken).ConfigureAwait(false);
             var sceneImages = photoPage.SelectNodesSafe("//div[@class='img-wrapper']//source[1]");
             foreach (var sceneImage in sceneImages)
@@ -186,6 +187,7 @@ namespace PhoenixAdult.Sites
                     posterURL = sceneImage.Attributes["srcset"].Value;
                 }
 
+                Logger.Info($"Found poster: {posterURL}");
                 result.Add(new RemoteImageInfo
                 {
                     Url = posterURL,
