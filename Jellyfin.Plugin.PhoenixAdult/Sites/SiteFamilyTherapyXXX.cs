@@ -69,6 +69,51 @@ namespace PhoenixAdult.Sites
                 return result;
             }
 
+            var sceneURL = Helper.Decode(sceneID[0]);
+            if (!sceneURL.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                sceneURL = Helper.GetSearchBaseURL(siteNum) + sceneURL;
+            }
+
+            result.Item.ExternalId = sceneURL;
+            result.Item.AddStudio("Family Therapy XXX");
+
+            var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken).ConfigureAwait(false);
+
+            result.Item.Name = sceneData.SelectSingleText("//h1[@class='entry-title']");
+
+            var dateNode = sceneData.SelectSingleText("//p[@class='post-meta']//span[@class='published']");
+            if (DateTime.TryParseExact(dateNode, "MMM d, yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var sceneDateObj))
+            {
+                result.Item.PremiereDate = sceneDateObj;
+            }
+
+            var genreNodes = sceneData.SelectNodesSafe("//p[@class='post-meta']//a[@rel='category tag']");
+            foreach (var genreNode in genreNodes)
+            {
+                result.Item.AddGenre(genreNode.InnerText.Trim());
+            }
+
+            var descriptionNodes = sceneData.SelectNodesSafe("//div[@class='entry-content']//p");
+            var overview = descriptionNodes[0].InnerText.Trim();
+            result.Item.Overview = overview;
+
+            // performers
+            // example ***Starring Sidney Summers & Susie Stellar***
+            var performersText = descriptionNodes[1].InnerText.Trim();
+            performersText = performersText.Trim('*');
+            performersText = performersText.Substring("Starring".Length + 1);
+
+            var performerNames = performersText.Split(" & ");
+
+            foreach (var performerName in performerNames)
+            {
+                result.People.Add(new PersonInfo
+                {
+                    Name = performerName,
+                });
+            }
+
             return result;
         }
 
