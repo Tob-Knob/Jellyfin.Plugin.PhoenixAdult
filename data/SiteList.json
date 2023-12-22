@@ -759,8 +759,11 @@
       "0": [ "Manyvids", "https://www.manyvids.com", "/video/" ],
     },
     "51": {
-      "0": [ "Data18", "http://www.data18.com", "/search/?k=" ],
+        "0": [ "Data18", "http://www.data18.com", "/search/?k=" ],
     },
+    "52": {
+        "0": [ "Family Therapy XXX", "https://familytherapyxxx.com", "/?s=" ]
+    }
   },
   "SiteIDList": {
     "0": "Network1service",
@@ -815,6 +818,7 @@
     "49": "SiteClips4Sale",
     "50": "SiteManyVids",
     "51": "SiteData18",
+    "52": "SiteFamilyTherapyXXX"
   },
   "Abbrieviations": {
     "^18og": "18OnlyGirls",
