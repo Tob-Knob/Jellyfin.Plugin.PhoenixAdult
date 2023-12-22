@@ -43,7 +43,6 @@ namespace PhoenixAdult.Providers
             IEnumerable<RemoteImageInfo> images = new List<RemoteImageInfo>();
             if (item == null)
             {
-                Logger.Info("item null");
                 return images;
             }
 
