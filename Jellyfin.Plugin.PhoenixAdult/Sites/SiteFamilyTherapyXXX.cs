@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.Providers;
-using PhoenixAdult.Helpers.Utils;
-using PhoenixAdult.Helpers;
-using System.Globalization;
 using MediaBrowser.Controller.Entities.Movies;
+using MediaBrowser.Controller.Providers;
+using MediaBrowser.Model.Entities;
+using MediaBrowser.Model.Providers;
+using PhoenixAdult.Helpers;
+using PhoenixAdult.Helpers.Utils;
 
 namespace PhoenixAdult.Sites
 {
@@ -125,6 +127,26 @@ namespace PhoenixAdult.Sites
             {
                 return result;
             }
+
+            var sceneURL = Helper.Decode(sceneID[0]);
+            if (!sceneURL.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                sceneURL = Helper.GetSearchBaseURL(siteNum) + sceneURL;
+            }
+
+            var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken).ConfigureAwait(false);
+
+            var sceneName = sceneData.SelectSingleText("//h1[@class='entry-title']");
+
+            // unable to get video poster from scene page, so performing search to get that poster
+            var searchResults = await this.Search(siteNum, sceneName, null, cancellationToken).ConfigureAwait(false);
+            var sceneResult = searchResults.First(x => x.Name == sceneName);
+
+            result.Add(new RemoteImageInfo
+            {
+                Url = sceneResult.ImageUrl,
+                Type = ImageType.Primary,
+            });
 
             return result;
         }
