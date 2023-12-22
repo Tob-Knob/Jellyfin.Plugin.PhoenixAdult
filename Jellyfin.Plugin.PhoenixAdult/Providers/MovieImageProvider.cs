@@ -41,7 +41,6 @@ namespace PhoenixAdult.Providers
 #endif
         {
             IEnumerable<RemoteImageInfo> images = new List<RemoteImageInfo>();
-            Logger.Info("Getting movie images");
             if (item == null)
             {
                 Logger.Info("item null");
@@ -50,7 +49,6 @@ namespace PhoenixAdult.Providers
 
             if (!item.ProviderIds.TryGetValue(this.Name, out var externalID))
             {
-                Logger.Info("could not find provider");
                 return images;
             }
 
@@ -63,12 +61,10 @@ namespace PhoenixAdult.Providers
             var siteNum = new int[2] { int.Parse(curID[0], CultureInfo.InvariantCulture), int.Parse(curID[1], CultureInfo.InvariantCulture) };
 
             var provider = Helper.GetProviderBySiteID(siteNum[0]);
-            Logger.Info($"Found provider: {provider.GetType()}");
             if (provider != null)
             {
                 try
                 {
-                    Logger.Info("Getting movie images from provider");
                     images = await provider.GetImages(siteNum, curID.Skip(2).ToArray(), item, cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception e)
