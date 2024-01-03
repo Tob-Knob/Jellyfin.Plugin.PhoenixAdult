@@ -107,6 +107,7 @@ namespace PhoenixAdult.Sites
             {
                 case Site.FamilyXXX:
                     {
+                        result.Item.AddStudio("Family XXX");
                         result.Item.Name = sceneData.SelectSingleText("//div[@class='sceneRight']//div[@class='indScene']//h2");
 
                         var dateNode = sceneData.SelectSingleText("//div[@class='sceneRight']//div[@class='indScene']//div[@class='sceneDateP']//span").TrimEnd(',');
@@ -142,6 +143,7 @@ namespace PhoenixAdult.Sites
 
                 case Site.HotWifeXXX:
                     {
+                        result.Item.AddStudio("HotwifeXXX");
                         result.Item.Name = sceneData.SelectSingleText("//div[@class='trailerInfo']/h2");
 
                         var dateNodeText = sceneData.SelectSingleText("//div[@class='trailerInfo']//div[contains(@class, 'released2')]");
