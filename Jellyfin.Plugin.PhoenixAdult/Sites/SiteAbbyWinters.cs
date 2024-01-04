@@ -126,9 +126,8 @@ namespace PhoenixAdult.Sites
             foreach (var performerNode in performerNodes)
             {
                 var name = performerNode.InnerText;
-                var performerUrl = Helper.GetSearchBaseURL(siteNum) + performerNode.Attributes["href"].Value;
+                var performerUrl = performerNode.Attributes["href"].Value;
                 var performerPage = await HTML.ElementFromURL(performerUrl, cancellationToken).ConfigureAwait(false);
-
                 var performerImageNode = performerPage.SelectSingleNode("//div[@class='feature-image']//img");
                 result.People.Add(new PersonInfo
                 {
@@ -157,16 +156,35 @@ namespace PhoenixAdult.Sites
 
             var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken).ConfigureAwait(false);
             var posterNode = sceneData.SelectSingleNode("//section[@class='section-intro']//div[@class='feature-image']//img");
-            result.Add(new RemoteImageInfo
+            if (posterNode != null)
             {
-                Url = posterNode.Attributes["src"].Value,
-                Type = ImageType.Primary,
-            });
-            result.Add(new RemoteImageInfo
+                result.Add(new RemoteImageInfo
+                {
+                    Url = posterNode.Attributes["src"].Value,
+                    Type = ImageType.Primary,
+                });
+                result.Add(new RemoteImageInfo
+                {
+                    Url = posterNode.Attributes["src"].Value,
+                    Type = ImageType.Backdrop,
+                });
+            }
+            else
             {
-                Url = posterNode.Attributes["src"].Value,
-                Type = ImageType.Backdrop,
-            });
+                posterNode = sceneData.SelectSingleNode("//section[@class='section-intro']//div[@class='feature-image']//div[contains(@class, 'video-player-container')]");
+                var posterUrl = posterNode.Attributes["data-poster"].Value;
+                posterUrl = posterUrl.Replace("&amp;", "&");
+                result.Add(new RemoteImageInfo
+                {
+                    Url = posterUrl,
+                    Type = ImageType.Primary,
+                });
+                result.Add(new RemoteImageInfo
+                {
+                    Url = posterUrl,
+                    Type = ImageType.Backdrop,
+                });
+            }
 
             var galleryImages = sceneData.SelectNodesSafe("//section[contains(@class, 'section-images')]//div[contains(@class, 'tile-image')]/img");
             foreach (var image in galleryImages)
