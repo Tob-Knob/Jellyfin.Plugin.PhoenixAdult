@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Entities;
@@ -26,13 +27,14 @@ namespace PhoenixAdult.Sites
 
             searchTitle = searchTitle.Replace(" ", "+", StringComparison.OrdinalIgnoreCase);
             var url = Helper.GetSearchSearchURL(siteNum) + searchTitle;
-            var data = await HTML.ElementFromURL(url, cancellationToken).ConfigureAwait(false);
+            Logger.Info($"Searching for scene: {url}");
+            var data = await HTML.ElementFromURL(url, cancellationToken, additionalSuccessStatusCodes: HttpStatusCode.Redirect).ConfigureAwait(false);
 
             var searchResults = data.SelectNodesSafe("//div[@class='updateItem']/a");
             foreach (var searchResult in searchResults)
             {
                 var sceneURL = searchResult.Attributes["href"].Value;
-
+                Logger.Info($"Possible result {sceneURL}");
                 var sceneID = new List<string> { Helper.Encode(sceneURL) };
 
                 if (searchDate.HasValue)
@@ -75,10 +77,13 @@ namespace PhoenixAdult.Sites
                 sceneDate = sceneID[1];
             }
 
+            var siteUrl = Helper.GetSearchBaseURL(siteNum);
+
             result.Item.ExternalId = sceneURL;
             result.Item.AddStudio("She Seduced Me");
 
-            var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken).ConfigureAwait(false);
+            Logger.Info($"Loading scene {sceneURL}");
+            var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken, additionalSuccessStatusCodes: HttpStatusCode.Redirect).ConfigureAwait(false);
 
             var title = sceneData.SelectSingleText("//span[@class='update_title']");
             result.Item.Name = title;
@@ -112,14 +117,15 @@ namespace PhoenixAdult.Sites
             {
                 var performerURL = performer.Attributes["href"].Value;
                 Logger.Info($"Loading performer page: {performerURL}");
-                var performerData = await HTML.ElementFromURL(performerURL, cancellationToken).ConfigureAwait(false);
+                var performerData = await HTML.ElementFromURL(performerURL, cancellationToken, additionalSuccessStatusCodes: HttpStatusCode.Redirect).ConfigureAwait(false);
                 var performerImage = performerData.SelectSingleNode("//img[contains(@class, 'model_bio_thumb')]");
+                Logger.Info(performerImage.OuterHtml);
                 result.AddPerson(new PersonInfo
                 {
                     Name = performer.InnerText,
                     Type = "Actor",
                     Role = "Performer",
-                    ImageUrl = performerImage.Attributes["src"].Value,
+                    ImageUrl = siteUrl + performerImage.Attributes["src0_2x"].Value,
                 });
             }
 
@@ -143,7 +149,7 @@ namespace PhoenixAdult.Sites
 
             var siteUrl = Helper.GetSearchBaseURL(siteNum);
 
-            var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken).ConfigureAwait(false);
+            var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken, additionalSuccessStatusCodes: HttpStatusCode.Redirect).ConfigureAwait(false);
 
             var imagesRootNode = sceneData.SelectSingleNode("//div[@class='update_image']");
 
@@ -164,12 +170,12 @@ namespace PhoenixAdult.Sites
             {
                 result.Add(new RemoteImageInfo
                 {
-                    Url = extraImage + poster.Attributes["src0_2x"].Value,
+                    Url = siteUrl + extraImage.Attributes["src0_2x"].Value,
                     Type = ImageType.Primary,
                 });
                 result.Add(new RemoteImageInfo
                 {
-                    Url = extraImage + poster.Attributes["src0_3x"].Value,
+                    Url = siteUrl + extraImage.Attributes["src0_3x"].Value,
                     Type = ImageType.Backdrop,
                 });
             }
