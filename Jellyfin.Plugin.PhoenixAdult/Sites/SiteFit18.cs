@@ -117,9 +117,11 @@ namespace PhoenixAdult.Sites
                 var performerPage = await HTML.ElementFromURL(performerUrl, cancellationToken).ConfigureAwait(false);
 
                 var performerImageNode = performerPage.SelectSingleNode("//picture/img");
-                result.People.Add(new PersonInfo
+                result.AddPerson(new PersonInfo
                 {
                     Name = name,
+                    Type = "Actor",
+                    Role = "Performer",
                     ImageUrl = performerImageNode.Attributes["src"].Value,
                 });
             }
