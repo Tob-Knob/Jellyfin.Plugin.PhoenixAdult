@@ -795,6 +795,10 @@
             "1": [ "BackroomCastingCouch", "https://www.backroomcastingcouch.com", "/trailers/" ],
             "2": [ "BBCSurprise", "https://bbcsurprise.com/", "/trailers/" ],
             "3": [ "BlackAmbush", "https://bbcsurprise.com/", "/trailers/" ]
+        },
+        "59": {
+            "0": [ "Tonight's Girlfriend", "https://www.tonightsgirlfriend.com", "/search?term=" ],
+            "1": [ "Tonights Girlfriend" ]
         }
     },
     "SiteIDList": {
