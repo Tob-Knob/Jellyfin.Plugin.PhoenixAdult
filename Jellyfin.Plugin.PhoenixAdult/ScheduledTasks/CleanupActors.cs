@@ -60,6 +60,8 @@ namespace PhoenixAdult.ScheduledTasks
 
                         this.libraryManager.UpdatePeople(item, parent);
                     }
+
+                    await Actors.TagActors(this.libraryManager, item);
                 }
 
                 if (cancellationToken.IsCancellationRequested)
