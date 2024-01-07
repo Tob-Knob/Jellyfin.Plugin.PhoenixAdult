@@ -134,39 +134,34 @@ namespace PhoenixAdult.Sites
                 sceneURL = Helper.GetSearchBaseURL(siteNum) + sceneURL;
             }
 
-            var siteUrl = Helper.GetSearchBaseURL(siteNum);
-
             Logger.Info($"Loading scene for images {sceneURL}");
             var sceneData = await HTML.ElementFromURL(sceneURL, cancellationToken, additionalSuccessStatusCodes: HttpStatusCode.Redirect).ConfigureAwait(false);
 
-            var poster = sceneData.SelectSingleNode("//div[@id='main-player']/video");
+            var video = sceneData.SelectSingleNode("//video[@id='main-player']");
             result.Add(new RemoteImageInfo
             {
-                Url = siteUrl + poster.Attributes["poster"].Value,
+                Url = video.Attributes["poster"].Value,
                 Type = ImageType.Primary,
             });
             result.Add(new RemoteImageInfo
             {
-                Url = siteUrl + poster.Attributes["poster"].Value,
+                Url = video.Attributes["poster"].Value,
                 Type = ImageType.Backdrop,
             });
 
             var extraImages = sceneData.SelectNodesSafe("//div[contains(@class, 'photos-slider')]//img");
             foreach (var extraImage in extraImages)
             {
-                else
+                result.Add(new RemoteImageInfo
                 {
-                    result.Add(new RemoteImageInfo
-                    {
-                        Url = extraImage.Attributes["src"].Value,
-                        Type = ImageType.Primary,
-                    });
-                    result.Add(new RemoteImageInfo
-                    {
-                        Url = extraImage.Attributes["src"].Value,
-                        Type = ImageType.Backdrop,
-                    });
-                }
+                    Url = extraImage.Attributes["src"].Value,
+                    Type = ImageType.Primary,
+                });
+                result.Add(new RemoteImageInfo
+                {
+                    Url = extraImage.Attributes["src"].Value,
+                    Type = ImageType.Backdrop,
+                });
             }
 
             return result;
