@@ -8,9 +8,6 @@ using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Providers;
 using PhoenixAdult.Configuration;
 using PhoenixAdult.Helpers.Utils;
-using System.Threading.Tasks;
-using MediaBrowser.Controller.Library;
-using System.Threading;
 
 #if __EMBY__
 #else
@@ -122,26 +119,6 @@ namespace PhoenixAdult.Helpers
             }
 
             return newPeoples;
-        }
-
-        public static async Task TagActors(ILibraryManager libraryManager, BaseItem item, CancellationToken cancellationToken = default)
-        {
-            if (Plugin.Instance.Configuration.TagActors)
-            {
-                var peopleItems = libraryManager.GetPeopleItems(new InternalPeopleQuery
-                {
-                    AppearsInItemId = item.Id,
-                });
-                if (peopleItems.Any())
-                {
-                    foreach (var peopleItem in peopleItems)
-                    {
-                        peopleItem.AddTag(Plugin.Instance.Configuration.TagActorValue);
-                    }
-
-                    await libraryManager.UpdateItemsAsync(peopleItems, null, ItemUpdateType.MetadataEdit, cancellationToken);
-                }
-            }
         }
 
         private static string ReplaceFromDatabase(string actorName, string[] studios)
