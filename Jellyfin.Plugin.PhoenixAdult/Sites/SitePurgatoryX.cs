@@ -25,16 +25,39 @@ namespace PhoenixAdult.Sites
                 return result;
             }
 
-            var url = Helper.GetSearchSearchURL(siteNum) + searchTitle;
+            var searchResultsURLs = new List<string>();
+
+            var url = Helper.GetSearchSearchURL(siteNum) + searchTitle.ToLower();
             Logger.Info($"Searching for scene: {url}");
             var data = await HTML.ElementFromURL(url, cancellationToken, additionalSuccessStatusCodes: HttpStatusCode.Redirect).ConfigureAwait(false);
-
-            var searchResults = data.SelectNodesSafe("//div[contains(@class, 'content-item')]//h3[@class='title']/a");
-            foreach (var searchResult in searchResults)
+            var siteResults = data.SelectNodesSafe("//div[contains(@class, 'content-item')]//h3[@class='title']/a");
+            if (siteResults.Count > 0)
             {
-                var sceneURL = searchResult.Attributes["href"].Value;
-                Logger.Info($"Possible result {sceneURL}");
-                var sceneID = new List<string> { Helper.Encode(sceneURL) };
+                foreach (var searchResult in siteResults)
+                {
+                    var sceneURL = searchResult.Attributes["href"].Value;
+                    Logger.Info($"Possible result {sceneURL}");
+                    searchResultsURLs.Add(sceneURL);
+                }
+            }
+            else
+            {
+                Logger.Info("Searching through Google");
+                var rootUrl = Helper.GetSearchBaseURL(siteNum);
+                var searchResults = await GoogleSearch.GetSearchResults(searchTitle, siteNum, cancellationToken).ConfigureAwait(false);
+                foreach (var searchResult in searchResults)
+                {
+                    if (searchResult.StartsWith(rootUrl + "/view/"))
+                    {
+                        Logger.Info($"Possible result {searchResult}");
+                        searchResultsURLs.Add(searchResult);
+                    }
+                }
+            }
+
+            foreach (var searchResult in searchResultsURLs)
+            {
+                var sceneID = new List<string> { Helper.Encode(searchResult) };
 
                 if (searchDate.HasValue)
                 {
