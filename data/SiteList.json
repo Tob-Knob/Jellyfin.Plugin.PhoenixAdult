@@ -755,9 +755,7 @@
             "0": [ "MetadataAPI", "https://metadataapi.net", "https://api.metadataapi.net" ]
         },
         "49": {
-            "0": [ "Clips4Sale", "https://www.clips4sale.com", "/studio/" ],
-            "1": [ "Family Therapy (Clips4Sale)" ],
-            "2": [ "Family Therapy Clips4Sale" ]
+            "0": [ "Clips4Sale", "https://www.clips4sale.com", "/studio/" ]
         },
         "50": {
             "0": [ "Manyvids", "https://www.manyvids.com", "/video/" ]
@@ -766,7 +764,9 @@
             "0": [ "Data18", "http://www.data18.com", "/search/?k=" ]
         },
         "52": {
-            "0": [ "Family Therapy XXX", "https://familytherapyxxx.com", "/?s=" ]
+            "0": [ "Family Therapy XXX", "https://familytherapyxxx.com", "/?s=" ],
+            "1": [ "Family Therapy (Clips4Sale)" ],
+            "2": [ "Family Therapy Clips4Sale" ]
         },
         "53": {
             "0": [ "XEmpire", "https://www.xempire.com", "https://tsmkfa364q-3.algolianet.com/1/indexes/*/queries" ],
