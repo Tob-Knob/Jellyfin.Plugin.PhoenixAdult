@@ -816,9 +816,6 @@
         },
         "62": {
             "0": [ "TS Playground", "https://tsplayground.com", "/search/" ]
-        },
-        "63": {
-            "0": [ "Stap Lez", "https://www.straplez.com", "/search/" ]
         }
     },
     "SiteIDList": {
@@ -884,8 +881,7 @@
         "59": "SiteTonightsGirlfriend",
         "60": "SiteSheSeducedMe",
         "61": "SitePurgatoryX",
-        "62": "SiteTSPlayground",
-        "63": "SiteStrapLez"
+        "62": "SiteTSPlayground"
     },
     "Abbrieviations": {
         "^18og": "18OnlyGirls",
